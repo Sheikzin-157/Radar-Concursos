@@ -12,6 +12,12 @@ export interface ExamBoardSummary {
   acronym: string | null;
 }
 
+export interface MoneyRange {
+  min: number | null;
+  max: number | null;
+  currency: 'BRL';
+}
+
 export interface CompetitionSummary {
   id: string;
   title: string;
@@ -20,9 +26,18 @@ export interface CompetitionSummary {
   currentStatus: string;
   totalVacancies: number | null;
   reserveRegistration: boolean | null;
-  salary: { min: number | null; max: number | null; currency: 'BRL' };
+  salary: MoneyRange;
   lastOfficialUpdateAt: string | null;
   lastValidatedAt: string | null;
+}
+
+export interface CompetitionDetail extends CompetitionSummary {
+  competitionType: string | null;
+  governmentSphere: string | null;
+  summary: string | null;
+  career: { id: string; name: string } | null;
+  registrationFee: MoneyRange;
+  officialUrl: string | null;
 }
 
 export interface ListCompetitionsQuery {
@@ -35,6 +50,7 @@ export interface ListCompetitionsQuery {
 
 export interface CompetitionRepository {
   listPublic(query: ListCompetitionsQuery): Promise<CompetitionSummary[]>;
+  findPublicById(id: string): Promise<CompetitionDetail | null>;
 }
 
 export const COMPETITION_REPOSITORY = Symbol('COMPETITION_REPOSITORY');
