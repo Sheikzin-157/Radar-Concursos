@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/profile_page.dart';
+import '../../features/auth/presentation/preferences_page.dart';
 import '../../features/competitions/presentation/favorites_page.dart';
 import '../../features/competitions/presentation/competition_detail_page.dart';
 import '../../features/competitions/presentation/competition_list_page.dart';
@@ -9,6 +10,7 @@ import '../../features/competitions/presentation/competition_list_page.dart';
 final appRouter = GoRouter(
   initialLocation: '/competitions',
   routes: [
+    GoRoute(path: '/preferences', builder: (_, _) => const PreferencesPage()),
     GoRoute(
       path: '/profile',
       builder: (context, state) => const ProfilePage(),
