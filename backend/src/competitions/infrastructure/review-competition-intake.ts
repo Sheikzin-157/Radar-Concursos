@@ -18,10 +18,10 @@ export async function reviewCompetitionIntake(
 
   const result = await pool.query(
     `UPDATE public_data.competition_intake
-       SET review_status=$2, reviewed_at=now(), updated_at=now()
+       SET review_status=$2, reviewed_by=$3, reviewed_at=now(), updated_at=now()
        WHERE id=$1 AND review_status='pending'
        RETURNING id`,
-    [intakeId, decision],
+    [intakeId, decision, reviewer.trim()],
   );
   return result.rowCount === 1;
 }
