@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Query } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Inject, Query } from '@nestjs/common';
 import type { Pool } from 'pg';
 import { DATABASE_POOL } from '../../shared/infrastructure/database/database.module';
 
@@ -27,7 +27,7 @@ export class CompetitionEventsController {
       end.getTime() <= start.getTime() ||
       end.getTime() - start.getTime() > 366 * 86400000
     ) {
-      throw new (await import('@nestjs/common')).BadRequestException({
+      throw new BadRequestException({
         code: 'INVALID_DATE_RANGE',
         message: 'Intervalo de datas inválido.',
       });
