@@ -20,7 +20,7 @@ describe('catalog moderation', () => {
     );
     expect(changed).toBe(true);
     expect(query.mock.calls[0][0]).toContain("review_status='pending'");
-    expect(query.mock.calls[0][1]).toEqual([id,'approved']);
+    expect(query.mock.calls[0][1]).toEqual([id,'approved','admin']);
   });
 
   it('bounds pending queue and does not expose unreviewed entries publicly', async () => {
