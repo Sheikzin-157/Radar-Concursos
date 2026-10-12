@@ -33,13 +33,14 @@ class CompetitionListPage extends ConsumerWidget {
             }
             return RefreshIndicator(
               onRefresh: () async {
-                await ref.refresh(competitionListProvider.future);
+                ref.invalidate(competitionListProvider);
+                await ref.read(competitionListProvider.future);
               },
               child: ListView.separated(
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
                 itemCount: items.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                separatorBuilder: (_, _) => const SizedBox(height: 12),
                 itemBuilder: (context, index) => _CompetitionCard(competition: items[index]),
               ),
             );
