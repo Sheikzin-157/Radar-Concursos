@@ -11,6 +11,10 @@ on:
       - "mobile/**"
       - ".github/workflows/mobile-ci.yml"
 
+concurrency:
+  group: mobile-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate-mobile:
     runs-on: ubuntu-latest
