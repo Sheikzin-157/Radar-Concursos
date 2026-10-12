@@ -27,7 +27,8 @@ class CompetitionDetailPage extends ConsumerWidget {
           data: (competition) => _DetailContent(
             competition: competition,
             onRefresh: () async {
-              await ref.refresh(competitionDetailProvider(competitionId).future);
+              ref.invalidate(competitionDetailProvider(competitionId));
+              await ref.read(competitionDetailProvider(competitionId).future);
             },
           ),
         ),
