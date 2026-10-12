@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../notifications/data/push_device_registration.dart';
+import '../../notifications/data/firebase_push_service.dart';
 
 class PreferencesPage extends StatefulWidget {
   const PreferencesPage({super.key});
@@ -16,6 +17,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
   bool _notify = false;
   bool _loading = true;
   bool _saving = false;
+  bool _pushBusy = false;
   String? _message;
 
   User? get _user =>
@@ -88,6 +90,21 @@ class _PreferencesPageState extends State<PreferencesPage> {
     }
   }
 
+  Future<void> _enablePush() async {
+    if (_pushBusy) return;
+    setState(() { _pushBusy = true; _message = null; });
+    try {
+      await FirebasePushService().enable();
+      if (mounted) setState(() => _message = 'Dispositivo registrado para notificações.');
+    } catch (error) {
+      if (mounted) setState(() => _message = error is StateError
+          ? error.message.toString()
+          : 'Não foi possível ativar as notificações.');
+    } finally {
+      if (mounted) setState(() => _pushBusy = false);
+    }
+  }
+
   @override
   void dispose() {
     _state.dispose();
@@ -137,6 +154,14 @@ class _PreferencesPageState extends State<PreferencesPage> {
                   onPressed: _saving ? null : _save,
                   child: Text(_saving ? 'Salvando...' : 'Salvar preferências'),
                 ),
+                if (_notify) ...[
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: _pushBusy ? null : _enablePush,
+                    icon: const Icon(Icons.notifications_active_outlined),
+                    label: Text(_pushBusy ? 'Ativando...' : 'Ativar notificações neste celular'),
+                  ),
+                ],
                 if (_message != null) Padding(
                   padding: const EdgeInsets.only(top: 12),
                   child: Text(_message!),
