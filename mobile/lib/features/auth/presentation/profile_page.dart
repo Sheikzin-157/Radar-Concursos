@@ -40,6 +40,11 @@ class _ProfilePageState extends State<ProfilePage> {
               title: const Text('Meus favoritos'),
               onTap: () => context.push('/favorites'),
             ),
+            ListTile(
+              leading: const Icon(Icons.tune),
+              title: const Text('Preferências de concursos'),
+              onTap: () => context.push('/preferences'),
+            ),
             const Divider(),
             OutlinedButton(
               onPressed: _busy ? null : () async {
