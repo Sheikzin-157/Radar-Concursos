@@ -16,7 +16,16 @@ class CompetitionListPage extends ConsumerWidget {
     final competitions = ref.watch(competitionListProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Concursos')),
+      appBar: AppBar(
+        title: const Text('Concursos'),
+        actions: [
+          IconButton(
+            tooltip: 'Minha conta',
+            icon: const Icon(Icons.account_circle_outlined),
+            onPressed: () => context.push('/login'),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [
