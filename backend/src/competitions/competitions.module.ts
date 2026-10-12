@@ -3,10 +3,11 @@ import { COMPETITION_REPOSITORY } from './application/ports/competition.reposito
 import { GetCompetitionUseCase } from './application/use-cases/get-competition.use-case';
 import { ListCompetitionsUseCase } from './application/use-cases/list-competitions.use-case';
 import { PostgresCompetitionRepository } from './infrastructure/persistence/postgres-competition.repository';
+import { CompetitionEventsController } from './presentation/competition-events.controller';
 import { CompetitionsController } from './presentation/competitions.controller';
 
 @Module({
-  controllers: [CompetitionsController],
+  controllers: [CompetitionsController, CompetitionEventsController],
   providers: [
     GetCompetitionUseCase,
     ListCompetitionsUseCase,
