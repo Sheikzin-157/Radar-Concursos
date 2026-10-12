@@ -49,6 +49,11 @@ export class PostgresCompetitionRepository implements CompetitionRepository {
       filters.push(`${sql} $${values.length}`);
     };
 
+    if (query.search?.trim()) {
+      values.push('%' + query.search.trim().replace(/[\\%_]/g, '\\    if (query.organizationId) addFilter') + '%');
+      filters.push(`(c.title ILIKE ${values.length} ESCAPE '\\' OR o.official_name ILIKE ${values.length} ESCAPE '\\' OR o.acronym ILIKE ${values.length} ESCAPE '\\')`);
+    }
+
     if (query.organizationId) addFilter('c.organization_id =', query.organizationId);
     if (query.examBoardId) addFilter('c.exam_board_id =', query.examBoardId);
     if (query.status) addFilter('c.current_status =', query.status);
