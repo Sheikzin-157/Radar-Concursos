@@ -1,31 +1,41 @@
 # Radar Concursos — Mobile
 
-Cliente Flutter do MVP.
+Cliente Flutter do MVP do Radar Concursos.
 
 ## Primeira vertical slice
 
 - catálogo público de concursos;
 - estados de loading, vazio e erro;
+- retry e pull-to-refresh;
 - detalhe do concurso;
-- navegação declarativa;
-- acesso REST encapsulado em camada de dados;
-- estado com Riverpod;
-- design foundations centralizadas.
+- navegação declarativa com go_router;
+- acesso REST encapsulado com Dio;
+- estado assíncrono com Riverpod;
+- tratamento do envelope de erro do backend;
+- design foundations centralizadas;
+- runners Android e iOS versionados.
 
-## Ambiente
+## Executar localmente
 
-A API é configurada por compile-time define.
+Instale o Flutter estável e, a partir do diretório `mobile`, execute:
+
+```bash
+flutter pub get
+flutter test
+```
 
 Android Emulator:
 
-    flutter run --dart-define=API_BASE_URL=http://10.0.2.2:3000/v1
+```bash
+flutter run --dart-define=API_BASE_URL=http://10.0.2.2:3000/v1
+```
 
 iOS Simulator:
 
-    flutter run --dart-define=API_BASE_URL=http://127.0.0.1:3000/v1
+```bash
+flutter run --dart-define=API_BASE_URL=http://127.0.0.1:3000/v1
+```
 
-Os runners nativos podem ser gerados no diretório mobile com:
+Para outros dispositivos ou ambientes, informe uma URL acessível do backend em `API_BASE_URL`. Ambientes não locais devem usar HTTPS.
 
-    flutter create . --platforms=android,ios
-
-Esse comando não deve substituir os arquivos em lib/.
+Não execute `flutter create` sobre esta pasta: os runners nativos e as configurações do aplicativo já fazem parte do repositório.
