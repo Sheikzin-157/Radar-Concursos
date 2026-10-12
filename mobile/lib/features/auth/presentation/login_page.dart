@@ -21,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  Future<void> _signIn() async {
+  Future<void> _authenticate({bool createAccount = false}) async {
     if (_busy) return;
     final email = _email.text.trim();
     if (email.isEmpty || _password.text.isEmpty) {
@@ -33,18 +33,36 @@ class _LoginPageState extends State<LoginPage> {
       _message = null;
     });
     try {
-      await Supabase.instance.client.auth.signInWithPassword(
-        email: email,
-        password: _password.text,
-      );
+      if (createAccount) {
+        await Supabase.instance.client.auth.signUp(email: email, password: _password.text);
+      } else {
+        await Supabase.instance.client.auth.signInWithPassword(email: email, password: _password.text);
+      }
       if (!mounted) return;
-      setState(() => _message = 'Sessão iniciada com sucesso.');
+      setState(() => _message = createAccount ? 'Cadastro enviado. Confirme seu email, se solicitado.' : 'Sessão iniciada com sucesso.');
     } on AuthException catch (error) {
       if (!mounted) return;
       setState(() => _message = error.message);
     } catch (_) {
       if (!mounted) return;
       setState(() => _message = 'Não foi possível entrar. Tente novamente.');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _resetPassword() async {
+    final email = _email.text.trim();
+    if (email.isEmpty) {
+      setState(() => _message = 'Informe seu email para recuperar a senha.');
+      return;
+    }
+    setState(() => _busy = true);
+    try {
+      await Supabase.instance.client.auth.resetPasswordForEmail(email);
+      if (mounted) setState(() => _message = 'Se o email estiver cadastrado, receberá instruções para recuperação.');
+    } catch (_) {
+      if (mounted) setState(() => _message = 'Não foi possível solicitar recuperação.');
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -64,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
             Text('Acesse sua conta', style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 20),
             if (!configured)
-              const Text('Autenticação indisponível: configure SUPABASE_URL e SUPABASE_ANON_KEY no ambiente.'),
+              const Text('Autenticação indisponível: configure SUPABASE_URL e SUPABASE_PUBLISHABLE_KEY no ambiente.'),
             if (configured) ...[
               TextField(
                 controller: _email,
@@ -78,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                 obscureText: true,
                 autofillHints: const [AutofillHints.password],
                 decoration: const InputDecoration(labelText: 'Senha'),
-                onSubmitted: (_) => _signIn(),
+                onSubmitted: (_) => _authenticate(),
               ),
               const SizedBox(height: 20),
               FilledButton(
