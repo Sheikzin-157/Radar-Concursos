@@ -8,7 +8,7 @@ final appRouter = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      redirect: (_, __) => '/competitions',
+      redirect: (_, _) => '/competitions',
     ),
     GoRoute(
       path: '/competitions',
