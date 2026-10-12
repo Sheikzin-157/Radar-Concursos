@@ -15,10 +15,11 @@ class FirebasePushService {
   StreamSubscription<String>? _tokenSubscription;
 
   static bool get configured =>
-      const String.fromEnvironment('FIREBASE_API_KEY').isNotEmpty &&
+      PushDeviceRegistration.currentPlatform() == 'android' ||
+      (const String.fromEnvironment('FIREBASE_API_KEY').isNotEmpty &&
       const String.fromEnvironment('FIREBASE_APP_ID').isNotEmpty &&
       const String.fromEnvironment('FIREBASE_SENDER_ID').isNotEmpty &&
-      const String.fromEnvironment('FIREBASE_PROJECT_ID').isNotEmpty;
+      const String.fromEnvironment('FIREBASE_PROJECT_ID').isNotEmpty);
 
   Future<void> enable() async {
     if (kIsWeb) throw StateError('Push para web não está habilitado.');
@@ -38,7 +39,10 @@ class FirebasePushService {
     }
 
     if (Firebase.apps.isEmpty) {
-      await Firebase.initializeApp(
+      if (platform == 'android') {
+        await Firebase.initializeApp();
+      } else {
+        await Firebase.initializeApp(
         options: const FirebaseOptions(
           apiKey: String.fromEnvironment('FIREBASE_API_KEY'),
           appId: String.fromEnvironment('FIREBASE_APP_ID'),
@@ -46,7 +50,8 @@ class FirebasePushService {
           projectId: String.fromEnvironment('FIREBASE_PROJECT_ID'),
           iosBundleId: String.fromEnvironment('FIREBASE_IOS_BUNDLE_ID'),
         ),
-      );
+        );
+      }
     }
 
     final messaging = FirebaseMessaging.instance;
