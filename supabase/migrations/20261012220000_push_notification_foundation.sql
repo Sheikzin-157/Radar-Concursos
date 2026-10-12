@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS public.user_push_devices (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  push_token text NOT NULL,
+  push_token text NOT NULL CHECK (length(push_token) BETWEEN 20 AND 4096),
   platform text NOT NULL CHECK (platform IN ('android', 'ios')),
   enabled boolean NOT NULL DEFAULT true,
   created_at timestamptz NOT NULL DEFAULT now(),
