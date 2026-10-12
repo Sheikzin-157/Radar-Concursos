@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../notifications/data/push_device_registration.dart';
+
 class PreferencesPage extends StatefulWidget {
   const PreferencesPage({super.key});
 
@@ -75,6 +77,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
         'notify_updates': _notify,
         'updated_at': DateTime.now().toUtc().toIso8601String(),
       });
+      if (!_notify) {
+        await const PushDeviceRegistration().unregisterAll();
+      }
       if (mounted) setState(() => _message = 'Preferências salvas.');
     } catch (_) {
       if (mounted) setState(() => _message = 'Não foi possível salvar as preferências.');
