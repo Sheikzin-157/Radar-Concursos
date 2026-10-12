@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../design_system/components/feedback_states.dart';
 import '../application/competition_providers.dart';
+import 'favorite_button.dart';
 import '../domain/competition.dart';
 
 class CompetitionDetailPage extends ConsumerWidget {
@@ -63,6 +64,8 @@ class _DetailContent extends StatelessWidget {
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
+          const SizedBox(height: 16),
+          FavoriteButton(competitionId: competition.id),
           const SizedBox(height: 16),
           Wrap(
             spacing: 8,
