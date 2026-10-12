@@ -100,11 +100,15 @@ class _PreferencesPageState extends State<PreferencesPage> {
     });
     try {
       await FirebasePushService().enable();
-      if (mounted) setState(() => _message = 'Dispositivo registrado para notificações.');
+      if (mounted) {
+        setState(() => _message = 'Dispositivo registrado para notificações.');
+      }
     } catch (error) {
-      if (mounted) setState(() => _message = error is StateError
-          ? error.message.toString()
-          : 'Não foi possível ativar as notificações.');
+      if (mounted) {
+        setState(() => _message = error is StateError
+            ? error.message.toString()
+            : 'Não foi possível ativar as notificações.');
+      }
     } finally {
       if (mounted) {
         setState(() => _pushBusy = false);
