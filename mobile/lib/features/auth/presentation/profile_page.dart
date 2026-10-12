@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../notifications/data/push_device_registration.dart';
+
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -55,6 +57,7 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: _busy ? null : () async {
                 setState(() => _busy = true);
                 try {
+                  await const PushDeviceRegistration().unregisterAll();
                   await Supabase.instance.client.auth.signOut();
                   if (context.mounted) context.go('/competitions');
                 } catch (_) {
