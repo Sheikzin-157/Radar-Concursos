@@ -20,6 +20,11 @@ class CompetitionListPage extends ConsumerWidget {
         title: const Text('Concursos'),
         actions: [
           IconButton(
+            tooltip: 'Calendário',
+            icon: const Icon(Icons.calendar_month_outlined),
+            onPressed: () => context.push('/calendar'),
+          ),
+          IconButton(
             tooltip: 'Minha conta',
             icon: const Icon(Icons.account_circle_outlined),
             onPressed: () => context.push('/profile'),
