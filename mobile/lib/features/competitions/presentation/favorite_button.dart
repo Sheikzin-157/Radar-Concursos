@@ -61,7 +61,11 @@ class _FavoriteButtonState extends State<FavoriteButton> {
   Future<void> _toggle() async {
     final user = _user;
     if (user == null) {
-      context.push('/login');
+      await context.push<void>('/login');
+      if (mounted) {
+        setState(() => _loading = true);
+        await _load();
+      }
       return;
     }
     if (_saving) return;
