@@ -18,14 +18,28 @@ CREATE POLICY "favorites_read_own"
   ON public.competition_favorites FOR SELECT TO authenticated
   USING ((SELECT auth.uid()) = user_id);
 
+-- SECURITY DEFINER avoids exposing unpublished catalog rows to authenticated clients.
+CREATE OR REPLACE FUNCTION public.is_published_competition(target_id uuid)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public_data.competitions c
+    WHERE c.id = target_id AND c.published_at IS NOT NULL
+  );
+$$;
+
+REVOKE ALL ON FUNCTION public.is_published_competition(uuid) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.is_published_competition(uuid) TO authenticated;
+
 CREATE POLICY "favorites_insert_own_published"
   ON public.competition_favorites FOR INSERT TO authenticated
   WITH CHECK (
     (SELECT auth.uid()) = user_id AND
-    EXISTS (
-      SELECT 1 FROM public_data.competitions c
-      WHERE c.id = competition_id AND c.published_at IS NOT NULL
-    )
+    public.is_published_competition(competition_id)
   );
 
 CREATE POLICY "favorites_delete_own"
