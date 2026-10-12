@@ -14,7 +14,8 @@
     "reminders:send": "ts-node src/notifications/run-reminders.ts",
     "catalog:admin": "ts-node src/competitions/infrastructure/catalog-admin-cli.ts",
     "catalog:intake": "ts-node src/competitions/infrastructure/run-source-intake.ts",
-    "catalog:discover": "ts-node src/competitions/infrastructure/run-notice-discovery.ts"
+    "catalog:discover": "ts-node src/competitions/infrastructure/run-notice-discovery.ts",
+    "edital:extract": "ts-node src/competitions/infrastructure/run-pdf-extraction.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",
