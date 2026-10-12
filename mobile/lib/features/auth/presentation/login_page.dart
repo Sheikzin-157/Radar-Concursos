@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginPage extends StatefulWidget {
@@ -39,7 +40,17 @@ class _LoginPageState extends State<LoginPage> {
         await Supabase.instance.client.auth.signInWithPassword(email: email, password: _password.text);
       }
       if (!mounted) return;
-      setState(() => _message = createAccount ? 'Cadastro enviado. Confirme seu email, se solicitado.' : 'Sessão iniciada com sucesso.');
+      if (!createAccount && Supabase.instance.client.auth.currentUser != null) {
+        if (context.canPop()) {
+          context.pop();
+          return;
+        }
+        context.go('/profile');
+        return;
+      }
+      setState(() => _message = createAccount
+          ? 'Cadastro solicitado. Confira seu email para confirmar a conta.'
+          : 'Confira seu email para concluir o acesso.');
     } on AuthException catch (error) {
       if (!mounted) return;
       setState(() => _message = error.message);
