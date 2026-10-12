@@ -41,6 +41,7 @@ export interface CompetitionDetail extends CompetitionSummary {
 }
 
 export interface ListCompetitionsQuery {
+  search?: string;
   organizationId?: string;
   examBoardId?: string;
   status?: string;
