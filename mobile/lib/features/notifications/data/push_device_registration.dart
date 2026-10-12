@@ -12,6 +12,14 @@ class PushDeviceRegistration {
   }) async {
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null) throw StateError('Autenticação necessária.');
+    final preferences = await Supabase.instance.client
+        .from('user_competition_preferences')
+        .select('notify_updates')
+        .eq('user_id', user.id)
+        .limit(1);
+    if (preferences.isEmpty || preferences.first['notify_updates'] != true) {
+      throw StateError('Ative os alertas nas preferências antes de registrar este dispositivo.');
+    }
     if (platform != 'android' && platform != 'ios') {
       throw ArgumentError.value(platform, 'platform', 'Plataforma inválida');
     }
