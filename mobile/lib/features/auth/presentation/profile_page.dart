@@ -57,7 +57,11 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: _busy ? null : () async {
                 setState(() => _busy = true);
                 try {
-                  await const PushDeviceRegistration().unregisterAll();
+                  try {
+                    await const PushDeviceRegistration().unregisterAll();
+                  } catch (_) {
+                    // Local session revocation must not depend on push availability.
+                  }
                   await Supabase.instance.client.auth.signOut();
                   if (context.mounted) context.go('/competitions');
                 } catch (_) {
