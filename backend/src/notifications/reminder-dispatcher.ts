@@ -13,7 +13,11 @@ export async function dispatchUpcomingReminders(
   if (!credentials && !options.dryRun) {
     throw new Error('FCM credentials are not configured');
   }
-  const batchSize = Math.min(Math.max(options.batchSize ?? 50, 1), 100);
+  const requestedBatchSize = options.batchSize ?? 50;
+  if (!Number.isInteger(requestedBatchSize) || requestedBatchSize < 1 || requestedBatchSize > 100) {
+    throw new RangeError('batchSize must be an integer between 1 and 100');
+  }
+  const batchSize = requestedBatchSize;
   const result = await pool.query<{
     user_id: string; event_id: string; competition_id: string;
     event_title: string; competition_title: string; push_token: string;
@@ -42,7 +46,7 @@ export async function dispatchUpcomingReminders(
          AND NOT EXISTS (
            SELECT 1 FROM public_data.push_delivery_ledger l
            WHERE l.user_id = p.user_id AND l.event_id = e.id
-             AND l.delivery_type = 'reminder' AND l.status IN ('pending', 'sent')
+             AND l.delivery_type = 'reminder'
          )
        ORDER BY e.starts_at, e.id, p.user_id
        LIMIT $1`,
@@ -56,14 +60,22 @@ export async function dispatchUpcomingReminders(
   let sent = 0;
   let failed = 0;
   for (const row of result.rows) {
-    // Atomic claim: concurrent workers cannot send the same event to one user.
+    // Atomically reserve the event and recheck consent at claim time.
+    // Failed claims remain reserved for manual review: FCM may have accepted
+    // a request before a network timeout, so automatic retry can duplicate it.
     const claim = await pool.query(
       `INSERT INTO public_data.push_delivery_ledger
          (user_id, event_id, delivery_type, status)
-       VALUES ($1, $2, 'reminder', 'pending')
+       SELECT $1, $2, 'reminder', 'pending'
+       WHERE EXISTS (
+         SELECT 1 FROM public.user_competition_preferences p
+         JOIN public.user_push_devices d ON d.user_id = p.user_id
+         WHERE p.user_id = $1 AND p.notify_updates = true
+           AND d.enabled = true AND d.push_token = $3
+       )
        ON CONFLICT (user_id, event_id, delivery_type) DO NOTHING
        RETURNING id`,
-      [row.user_id, row.event_id],
+      [row.user_id, row.event_id, row.push_token],
     );
     if (!claim.rowCount) continue;
     try {
