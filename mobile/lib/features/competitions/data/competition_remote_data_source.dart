@@ -9,6 +9,7 @@ class CompetitionRemoteDataSource {
 
   Future<List<CompetitionSummary>> list({
     int limit = 20,
+    String? search,
     String? state,
     String? status,
     String? organizationId,
@@ -18,6 +19,7 @@ class CompetitionRemoteDataSource {
       '/competitions',
       queryParameters: {
         'limit': limit,
+        'search': ?search,
         'state': ?state,
         'status': ?status,
         'organizationId': ?organizationId,
