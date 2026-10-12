@@ -4,7 +4,6 @@ import { ListCompetitionsUseCase } from '../application/use-cases/list-competiti
 import { ListCompetitionsHttpQuery } from './list-competitions.query';
 
 const competitionIdPipe = new ParseUUIDPipe({
-  version: 'all',
   exceptionFactory: () => new BadRequestException({
     code: 'INVALID_UUID',
     message: 'Identificador inválido.',
