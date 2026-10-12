@@ -18,7 +18,10 @@ class CompetitionListPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Concursos')),
       body: SafeArea(
-        child: competitions.when(
+        child: Column(
+          children: [
+            _CatalogFiltersBar(filters: ref.watch(competitionFiltersProvider)),
+            Expanded(child: competitions.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, _) => RadarErrorState(
             message: error is AppException ? error.message : 'Ocorreu um erro inesperado.',
@@ -26,9 +29,12 @@ class CompetitionListPage extends ConsumerWidget {
           ),
           data: (items) {
             if (items.isEmpty) {
-              return const RadarEmptyState(
-                title: 'Nenhum concurso publicado',
-                message: 'Assim que houver concursos disponíveis, eles aparecerão aqui.',
+              return RadarEmptyState(
+                title: 'Nenhum concurso encontrado',
+                message: ref.watch(competitionFiltersProvider).state != null ||
+                        ref.watch(competitionFiltersProvider).status != null
+                    ? 'Nenhum concurso corresponde aos filtros selecionados.'
+                    : 'Assim que houver concursos disponíveis, eles aparecerão aqui.',
               );
             }
             return RefreshIndicator(
@@ -45,11 +51,141 @@ class CompetitionListPage extends ConsumerWidget {
               ),
             );
           },
+            )),
+          ],
         ),
       ),
     );
   }
 }
+
+class _CatalogFiltersBar extends ConsumerWidget {
+  const _CatalogFiltersBar({required this.filters});
+
+  final CompetitionFilters filters;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final active = filters.state != null || filters.status != null;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: () => _showFilters(context, ref),
+              icon: const Icon(Icons.tune),
+              label: Text(active ? 'Filtros ativos' : 'Filtrar concursos'),
+            ),
+          ),
+          if (active) ...[
+            const SizedBox(width: 8),
+            IconButton(
+              tooltip: 'Limpar filtros',
+              onPressed: () => ref
+                  .read(competitionFiltersProvider.notifier)
+                  .apply(const CompetitionFilters()),
+              icon: const Icon(Icons.filter_alt_off_outlined),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showFilters(BuildContext context, WidgetRef ref) async {
+    String? state = filters.state;
+    final statusController = TextEditingController(text: filters.status);
+    try {
+      await showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        showDragHandle: true,
+        builder: (sheetContext) => StatefulBuilder(
+          builder: (sheetContext, setSheetState) => Padding(
+            padding: EdgeInsets.fromLTRB(
+              20, 12, 20,
+              MediaQuery.viewInsetsOf(sheetContext).bottom + 24,
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Filtros do catálogo',
+                    style: Theme.of(sheetContext).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<String>(
+                    initialValue: state,
+                    decoration: const InputDecoration(
+                      labelText: 'UF do órgão',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: [
+                      const DropdownMenuItem<String>(
+                        value: '',
+                        child: Text('Todas as UFs'),
+                      ),
+                      for (final uf in _ufs)
+                        DropdownMenuItem(value: uf, child: Text(uf)),
+                    ],
+                    onChanged: (value) => setSheetState(() {
+                      state = value == null || value.isEmpty ? null : value;
+                    }),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: statusController,
+                    textCapitalization: TextCapitalization.none,
+                    decoration: const InputDecoration(
+                      labelText: 'Código da situação (opcional)',
+                      hintText: 'Ex.: inscricoes_abertas',
+                      helperText: 'Filtra pela situação exata publicada pela API.',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  FilledButton(
+                    onPressed: () {
+                      final status = statusController.text.trim();
+                      ref.read(competitionFiltersProvider.notifier).apply(
+                        CompetitionFilters(
+                          state: state,
+                          status: status.isEmpty ? null : status,
+                        ),
+                      );
+                      Navigator.of(sheetContext).pop();
+                    },
+                    child: const Text('Aplicar filtros'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      ref.read(competitionFiltersProvider.notifier).apply(
+                        const CompetitionFilters(),
+                      );
+                      Navigator.of(sheetContext).pop();
+                    },
+                    child: const Text('Limpar filtros'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    } finally {
+      statusController.dispose();
+    }
+  }
+}
+
+const _ufs = [
+  'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO',
+  'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI',
+  'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO',
+];
 
 class _CompetitionCard extends StatelessWidget {
   const _CompetitionCard({required this.competition});
