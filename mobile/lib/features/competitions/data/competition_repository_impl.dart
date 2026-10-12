@@ -7,8 +7,22 @@ class CompetitionRepositoryImpl implements CompetitionRepository {
   final CompetitionRemoteDataSource _remote;
 
   @override
-  Future<CompetitionDetail> getById(String competitionId) => _remote.getById(competitionId);
+  Future<CompetitionDetail> getById(String competitionId) =>
+      _remote.getById(competitionId);
 
   @override
-  Future<List<CompetitionSummary>> list({int limit = 20, String? state, String? status}) => _remote.list(limit: limit, state: state, status: status);
+  Future<List<CompetitionSummary>> list({
+    int limit = 20,
+    String? state,
+    String? status,
+    String? organizationId,
+    String? examBoardId,
+  }) =>
+      _remote.list(
+        limit: limit,
+        state: state,
+        status: status,
+        organizationId: organizationId,
+        examBoardId: examBoardId,
+      );
 }
