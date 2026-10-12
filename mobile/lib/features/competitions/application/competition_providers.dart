@@ -8,12 +8,14 @@ import '../domain/competition_repository.dart';
 
 class CompetitionFilters {
   const CompetitionFilters({
+    this.search,
     this.state,
     this.status,
     this.organizationId,
     this.examBoardId,
   });
 
+  final String? search;
   final String? state;
   final String? status;
   final String? organizationId;
@@ -22,13 +24,14 @@ class CompetitionFilters {
   @override
   bool operator ==(Object other) =>
       other is CompetitionFilters &&
+      search == other.search &&
       state == other.state &&
       status == other.status &&
       organizationId == other.organizationId &&
       examBoardId == other.examBoardId;
 
   @override
-  int get hashCode => Object.hash(state, status, organizationId, examBoardId);
+  int get hashCode => Object.hash(search, state, status, organizationId, examBoardId);
 }
 
 class CompetitionFiltersNotifier extends Notifier<CompetitionFilters> {
@@ -60,6 +63,7 @@ final competitionListProvider =
     FutureProvider.autoDispose<List<CompetitionSummary>>((ref) {
   final filters = ref.watch(competitionFiltersProvider);
   return ref.watch(competitionRepositoryProvider).list(
+        search: filters.search,
         state: filters.state,
         status: filters.status,
         organizationId: filters.organizationId,
