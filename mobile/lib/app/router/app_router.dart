@@ -5,12 +5,14 @@ import '../../features/auth/presentation/profile_page.dart';
 import '../../features/auth/presentation/preferences_page.dart';
 import '../../features/competitions/presentation/favorites_page.dart';
 import '../../features/competitions/presentation/calendar_page.dart';
+import '../../features/competitions/presentation/alerts_page.dart';
 import '../../features/competitions/presentation/competition_detail_page.dart';
 import '../../features/competitions/presentation/competition_list_page.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/competitions',
   routes: [
+    GoRoute(path: '/alerts', builder: (_, _) => const AlertsPage()),
     GoRoute(path: '/calendar', builder: (_, _) => const CalendarPage()),
     GoRoute(path: '/preferences', builder: (_, _) => const PreferencesPage()),
     GoRoute(
