@@ -11,7 +11,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "reminders:dry-run": "ts-node src/notifications/run-reminders.ts --dry-run",
-    "reminders:send": "ts-node src/notifications/run-reminders.ts"
+    "reminders:send": "ts-node src/notifications/run-reminders.ts",
+    "catalog:admin": "ts-node src/competitions/infrastructure/catalog-admin-cli.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",
