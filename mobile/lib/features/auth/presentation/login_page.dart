@@ -88,7 +88,7 @@ class _LoginPageState extends State<LoginPage> {
             ],
             if (_message != null) ...[
               const SizedBox(height: 16),
-              Text(_message!, role: TextRole.none),
+              Text(_message!),
             ],
           ],
         ),
