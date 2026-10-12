@@ -20,6 +20,7 @@ class CompetitionListPage extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
+            _CatalogSearchBar(filters: ref.watch(competitionFiltersProvider)),
             _CatalogFiltersBar(filters: ref.watch(competitionFiltersProvider)),
             Expanded(child: competitions.when(
           loading: () => const Center(child: CircularProgressIndicator()),
@@ -31,7 +32,8 @@ class CompetitionListPage extends ConsumerWidget {
             if (items.isEmpty) {
               return RadarEmptyState(
                 title: 'Nenhum concurso encontrado',
-                message: ref.watch(competitionFiltersProvider).state != null ||
+                message: ref.watch(competitionFiltersProvider).search != null ||
+                        ref.watch(competitionFiltersProvider).state != null ||
                         ref.watch(competitionFiltersProvider).status != null
                     ? 'Nenhum concurso corresponde aos filtros selecionados.'
                     : 'Assim que houver concursos disponíveis, eles aparecerão aqui.',
@@ -59,6 +61,69 @@ class CompetitionListPage extends ConsumerWidget {
   }
 }
 
+class _CatalogSearchBar extends ConsumerStatefulWidget {
+  const _CatalogSearchBar({required this.filters});
+
+  final CompetitionFilters filters;
+
+  @override
+  ConsumerState<_CatalogSearchBar> createState() => _CatalogSearchBarState();
+}
+
+class _CatalogSearchBarState extends ConsumerState<_CatalogSearchBar> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.filters.search);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    final search = _controller.text.trim();
+    ref.read(competitionFiltersProvider.notifier).apply(
+      CompetitionFilters(
+        search: search.isEmpty ? null : search,
+        state: widget.filters.state,
+        status: widget.filters.status,
+        organizationId: widget.filters.organizationId,
+        examBoardId: widget.filters.examBoardId,
+      ),
+    );
+    FocusScope.of(context).unfocus();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      child: TextField(
+        controller: _controller,
+        maxLength: 100,
+        textInputAction: TextInputAction.search,
+        onSubmitted: (_) => _submit(),
+        decoration: InputDecoration(
+          labelText: 'Pesquisar concursos',
+          hintText: 'Cargo, concurso ou órgão',
+          prefixIcon: const Icon(Icons.search),
+          border: const OutlineInputBorder(),
+          suffixIcon: IconButton(
+            tooltip: 'Pesquisar',
+            onPressed: _submit,
+            icon: const Icon(Icons.arrow_forward),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _CatalogFiltersBar extends ConsumerWidget {
   const _CatalogFiltersBar({required this.filters});
 
@@ -66,7 +131,7 @@ class _CatalogFiltersBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final active = filters.state != null || filters.status != null;
+    final active = filters.search != null || filters.state != null || filters.status != null;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: Row(
@@ -152,6 +217,7 @@ class _CatalogFiltersBar extends ConsumerWidget {
                       final status = statusController.text.trim();
                       ref.read(competitionFiltersProvider.notifier).apply(
                         CompetitionFilters(
+                          search: filters.search,
                           state: state,
                           status: status.isEmpty ? null : status,
                         ),
