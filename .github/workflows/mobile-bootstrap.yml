@@ -29,7 +29,9 @@ jobs:
         run: flutter create . --platforms=android,ios --project-name radar_concursos --org br.com.radarconcursos
 
       - name: Protect authored mobile sources
-        run: git diff --exit-code -- mobile/lib mobile/pubspec.yaml mobile/analysis_options.yaml
+        run: |
+          git diff --exit-code -- mobile/lib mobile/pubspec.yaml
+          git restore mobile/analysis_options.yaml mobile/.gitignore mobile/README.md
 
       - name: Commit generated runners
         run: |
