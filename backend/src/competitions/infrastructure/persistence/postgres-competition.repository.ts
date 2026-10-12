@@ -50,8 +50,13 @@ export class PostgresCompetitionRepository implements CompetitionRepository {
     };
 
     if (query.search?.trim()) {
-      values.push('%' + query.search.trim().replace(/[\\%_]/g, '\\    if (query.organizationId) addFilter') + '%');
-      filters.push(`(c.title ILIKE ${values.length} ESCAPE '\\' OR o.official_name ILIKE ${values.length} ESCAPE '\\' OR o.acronym ILIKE ${values.length} ESCAPE '\\')`);
+      values.push('%' + query.search.trim() + '%');
+      const position = '$' + values.length;
+      filters.push(
+        '(c.title ILIKE ' + position +
+          ' OR o.official_name ILIKE ' + position +
+          ' OR o.acronym ILIKE ' + position + ')',
+      );
     }
 
     if (query.organizationId) addFilter('c.organization_id =', query.organizationId);
