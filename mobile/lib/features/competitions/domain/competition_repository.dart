@@ -1,6 +1,13 @@
 import 'competition.dart';
 
 abstract interface class CompetitionRepository {
-  Future<List<CompetitionSummary>> list({int limit = 20, String? state, String? status});
+  Future<List<CompetitionSummary>> list({
+    int limit = 20,
+    String? state,
+    String? status,
+    String? organizationId,
+    String? examBoardId,
+  });
+
   Future<CompetitionDetail> getById(String competitionId);
 }
