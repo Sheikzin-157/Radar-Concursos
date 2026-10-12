@@ -91,8 +91,13 @@ class _PreferencesPageState extends State<PreferencesPage> {
   }
 
   Future<void> _enablePush() async {
-    if (_pushBusy) return;
-    setState(() { _pushBusy = true; _message = null; });
+    if (_pushBusy) {
+      return;
+    }
+    setState(() {
+      _pushBusy = true;
+      _message = null;
+    });
     try {
       await FirebasePushService().enable();
       if (mounted) setState(() => _message = 'Dispositivo registrado para notificações.');
