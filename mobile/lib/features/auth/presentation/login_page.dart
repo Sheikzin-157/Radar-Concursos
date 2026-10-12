@@ -100,8 +100,16 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 20),
               FilledButton(
-                onPressed: _busy ? null : _signIn,
-                child: Text(_busy ? 'Entrando...' : 'Entrar'),
+                onPressed: _busy ? null : () => _authenticate(),
+                child: Text(_busy ? 'Aguarde...' : 'Entrar'),
+              ),
+              TextButton(
+                onPressed: _busy ? null : () => _authenticate(createAccount: true),
+                child: const Text('Criar conta'),
+              ),
+              TextButton(
+                onPressed: _busy ? null : _resetPassword,
+                child: const Text('Esqueci minha senha'),
               ),
             ],
             if (_message != null) ...[
