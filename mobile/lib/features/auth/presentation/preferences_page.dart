@@ -106,7 +106,9 @@ class _PreferencesPageState extends State<PreferencesPage> {
           ? error.message.toString()
           : 'Não foi possível ativar as notificações.');
     } finally {
-      if (mounted) setState(() => _pushBusy = false);
+      if (mounted) {
+        setState(() => _pushBusy = false);
+      }
     }
   }
 
