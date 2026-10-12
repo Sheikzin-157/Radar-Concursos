@@ -13,6 +13,7 @@ class CompetitionRepositoryImpl implements CompetitionRepository {
   @override
   Future<List<CompetitionSummary>> list({
     int limit = 20,
+    String? search,
     String? state,
     String? status,
     String? organizationId,
@@ -20,6 +21,7 @@ class CompetitionRepositoryImpl implements CompetitionRepository {
   }) =>
       _remote.list(
         limit: limit,
+        search: search,
         state: state,
         status: status,
         organizationId: organizationId,
