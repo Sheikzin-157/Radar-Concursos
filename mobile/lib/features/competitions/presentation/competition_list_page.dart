@@ -22,7 +22,7 @@ class CompetitionListPage extends ConsumerWidget {
           IconButton(
             tooltip: 'Minha conta',
             icon: const Icon(Icons.account_circle_outlined),
-            onPressed: () => context.push('/login'),
+            onPressed: () => context.push('/profile'),
           ),
         ],
       ),
