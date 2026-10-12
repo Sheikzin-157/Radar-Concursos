@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final configured =
         const String.fromEnvironment('SUPABASE_URL').isNotEmpty &&
-        const String.fromEnvironment('SUPABASE_ANON_KEY').isNotEmpty;
+        const String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY').isNotEmpty;
     return Scaffold(
       appBar: AppBar(title: const Text('Entrar')),
       body: SafeArea(
