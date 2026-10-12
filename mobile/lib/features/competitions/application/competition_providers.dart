@@ -31,8 +31,16 @@ class CompetitionFilters {
   int get hashCode => Object.hash(state, status, organizationId, examBoardId);
 }
 
-final competitionFiltersProvider = StateProvider<CompetitionFilters>(
-  (ref) => const CompetitionFilters(),
+class CompetitionFiltersNotifier extends Notifier<CompetitionFilters> {
+  @override
+  CompetitionFilters build() => const CompetitionFilters();
+
+  void apply(CompetitionFilters filters) => state = filters;
+}
+
+final competitionFiltersProvider =
+    NotifierProvider<CompetitionFiltersNotifier, CompetitionFilters>(
+  CompetitionFiltersNotifier.new,
 );
 
 final apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
