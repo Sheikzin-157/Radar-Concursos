@@ -21,7 +21,11 @@ export async function dispatchUpcomingReminders(
     `SELECT p.user_id, e.id AS event_id, c.id AS competition_id,
             e.title AS event_title, c.title AS competition_title, d.push_token
        FROM public.user_competition_preferences p
-       JOIN public.user_push_devices d ON d.user_id = p.user_id AND d.enabled = true
+       JOIN LATERAL (
+         SELECT d.push_token FROM public.user_push_devices d
+         WHERE d.user_id = p.user_id AND d.enabled = true
+         ORDER BY d.updated_at DESC, d.id DESC LIMIT 1
+       ) d ON true
        JOIN public_data.competition_events e
          ON e.starts_at >= now() AND e.starts_at < now() + interval '24 hours'
        JOIN public_data.competitions c ON c.id = e.competition_id
