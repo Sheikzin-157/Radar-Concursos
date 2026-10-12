@@ -1,0 +1,44 @@
+name: Bootstrap Mobile Runners
+
+on:
+  push:
+    branches:
+      - "feat/mobile-foundation"
+    paths:
+      - ".github/workflows/mobile-bootstrap.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  generate-runners:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Generate Android and iOS runners
+        working-directory: mobile
+        run: flutter create . --platforms=android,ios --project-name radar_concursos --org br.com.radarconcursos
+
+      - name: Protect authored mobile sources
+        run: git diff --exit-code -- mobile/lib mobile/pubspec.yaml mobile/analysis_options.yaml
+
+      - name: Commit generated runners
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mobile/android mobile/ios mobile/.metadata
+          if git diff --cached --quiet; then
+            echo "No generated runner changes."
+            exit 0
+          fi
+          git commit -m "chore(mobile): generate Android and iOS runners"
+          git push origin HEAD:feat/mobile-foundation
