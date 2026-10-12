@@ -45,6 +45,11 @@ class _ProfilePageState extends State<ProfilePage> {
               title: const Text('Preferências de concursos'),
               onTap: () => context.push('/preferences'),
             ),
+            ListTile(
+              leading: const Icon(Icons.notifications_outlined),
+              title: const Text('Meus alertas'),
+              onTap: () => context.push('/alerts'),
+            ),
             const Divider(),
             OutlinedButton(
               onPressed: _busy ? null : () async {
