@@ -39,3 +39,28 @@ flutter run --dart-define=API_BASE_URL=http://127.0.0.1:3000/v1
 Para outros dispositivos ou ambientes, informe uma URL acessível do backend em `API_BASE_URL`. Ambientes não locais devem usar HTTPS.
 
 Não execute `flutter create` sobre esta pasta: os runners nativos e as configurações do aplicativo já fazem parte do repositório.
+
+## Notificações Firebase (Android e iOS)
+
+A integração Flutter FCM está preparada, mas exige um projeto Firebase
+registrado para o pacote Android `br.com.radarconcursos.radar_concursos`
+e o identificador iOS correspondente. Configure o projeto no Firebase Console
+e associe os aplicativos Android e iOS conforme o guia oficial do FlutterFire.
+
+Defina os valores públicos por `--dart-define` (não commite credenciais
+privadas):
+
+- `SUPABASE_URL` e `SUPABASE_PUBLISHABLE_KEY`;
+- `FIREBASE_API_KEY`, `FIREBASE_APP_ID`, `FIREBASE_SENDER_ID`,
+  `FIREBASE_PROJECT_ID` e `FIREBASE_IOS_BUNDLE_ID` quando aplicável.
+
+Siga os requisitos nativos do Firebase para Google Services no Android,
+e no iOS configure APNs, Push Notifications e Background Modes. O SDK
+não inicia o registro FCM durante a inicialização do app: o usuário
+precisa habilitar os alertas, salvar a preferência e acionar
+**Ativar notificações neste celular**. A autorização do sistema
+operacional é solicitada somente nesse fluxo.
+
+O serviço de **envio automático** ainda precisa de um worker com
+credenciais de servidor FCM HTTP v1 protegidas; nunca armazene uma
+chave de serviço Firebase no aplicativo Flutter nem no GitHub.
