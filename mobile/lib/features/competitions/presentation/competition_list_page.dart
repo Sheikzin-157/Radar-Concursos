@@ -80,6 +80,15 @@ class _CatalogSearchBarState extends ConsumerState<_CatalogSearchBar> {
   }
 
   @override
+  void didUpdateWidget(covariant _CatalogSearchBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.filters.search != widget.filters.search &&
+        _controller.text.trim() != (widget.filters.search ?? '')) {
+      _controller.text = widget.filters.search ?? '';
+    }
+  }
+
+  @override
   void dispose() {
     _controller.dispose();
     super.dispose();
@@ -87,6 +96,7 @@ class _CatalogSearchBarState extends ConsumerState<_CatalogSearchBar> {
 
   void _submit() {
     final search = _controller.text.trim();
+    if (search.isNotEmpty && search.length < 2) return;
     ref.read(competitionFiltersProvider.notifier).apply(
       CompetitionFilters(
         search: search.isEmpty ? null : search,
@@ -110,7 +120,7 @@ class _CatalogSearchBarState extends ConsumerState<_CatalogSearchBar> {
         onSubmitted: (_) => _submit(),
         decoration: InputDecoration(
           labelText: 'Pesquisar concursos',
-          hintText: 'Cargo, concurso ou órgão',
+          hintText: 'Título do concurso ou órgão',
           prefixIcon: const Icon(Icons.search),
           border: const OutlineInputBorder(),
           suffixIcon: IconButton(
