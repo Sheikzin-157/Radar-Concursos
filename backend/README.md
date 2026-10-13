@@ -33,3 +33,15 @@ Antes de produção: configurar scheduler autenticado (execução única), crede
 em gerenciador de segredos, métricas, limites de taxa e teste em dispositivo
 real. A simulação **não** comprova entrega real.
 
+
+## Railway — primeira implantação do backend
+
+1. No Railway, conecte o repositório `Sheikzin-157/Radar-Concursos` e selecione a branch `feat/mobile-foundation` (não implantar `main` ainda).
+2. No serviço, defina **Root Directory** como `/backend`. O Railway detectará `backend/Dockerfile` como `Dockerfile` na raiz do serviço.
+3. Adicione no painel de variáveis do serviço `DATABASE_URL` (connection string PostgreSQL obtida do Supabase). Adicione `DATABASE_SSL=true` se for necessário SSL. Nunca comite senhas de banco nem chaves privadas.
+4. Configure o Healthcheck Path como `/health/ready` e gere um domínio público HTTPS em Networking. A aplicação escuta a variável `PORT` fornecida pela Railway.
+5. Depois do deploy, valide `https://SEU-DOMINIO/health/ready` e `https://SEU-DOMINIO/v1/competitions?limit=1`. Com `API_BASE_URL=https://SEU-DOMINIO/v1`, execute `npm run smoke:api` no diretório `backend`.
+6. Passe a URL `https://SEU-DOMINIO/v1` ao Flutter por `--dart-define=API_BASE_URL=https://SEU-DOMINIO/v1`.
+
+O serviço **não** exige variáveis Firebase para listar concursos. Mantenha `ENABLE_PUSH_DELIVERY`, `ENABLE_CATALOG_ADMIN` e `ENABLE_OFFICIAL_SOURCE_INTAKE` desativadas na primeira implantação. O domínio só será utilizável por usuários quando houver concursos oficiais efetivamente revisados e publicados.
+
