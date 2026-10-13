@@ -23,8 +23,14 @@ export async function publishReviewedCompetition(
     );
     if (staged.rows.length !== 1) throw new Error('Intake is not approved or does not exist');
     const item = staged.rows[0];
-    if (item.status === 'requires_review') {
+    if (item.status === 'requires_review' || !item.status.trim()) {
       throw new Error('Intake status requires review before publication');
+    }
+    const checkedAt = new Date(item.source_checked_at);
+    if (!Number.isFinite(checkedAt.getTime()) ||
+        checkedAt.getTime() > Date.now() ||
+        Date.now() - checkedAt.getTime() > 30 * 24 * 60 * 60 * 1000) {
+      throw new Error('Official source verification is missing, invalid or older than 30 days');
     }
     const org = await client.query<{id: string}>(
       `SELECT id FROM public_data.organizations
