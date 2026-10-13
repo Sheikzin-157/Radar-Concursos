@@ -15,7 +15,8 @@
     "catalog:admin": "ts-node src/competitions/infrastructure/catalog-admin-cli.ts",
     "catalog:intake": "ts-node src/competitions/infrastructure/run-source-intake.ts",
     "catalog:discover": "ts-node src/competitions/infrastructure/run-notice-discovery.ts",
-    "edital:extract": "ts-node src/competitions/infrastructure/run-pdf-extraction.ts"
+    "edital:extract": "ts-node src/competitions/infrastructure/run-pdf-extraction.ts",
+    "smoke:api": "node scripts/smoke-api.cjs"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",
