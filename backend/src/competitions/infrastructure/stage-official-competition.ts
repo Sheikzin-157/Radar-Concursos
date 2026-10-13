@@ -30,7 +30,7 @@ export async function stageOfficialCompetition(
        title = EXCLUDED.title, status = EXCLUDED.status,
        state_code = EXCLUDED.state_code,
        source_checked_at = EXCLUDED.source_checked_at,
-       review_status = 'pending', reviewed_at = NULL
+       review_status = 'pending', reviewed_at = NULL, reviewed_by = NULL
      RETURNING id, organization_name, title, official_url, status,
        state_code, source_checked_at, review_status`,
     [draft.organizationName, draft.title, draft.officialUrl, draft.status,
