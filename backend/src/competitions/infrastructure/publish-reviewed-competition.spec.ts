@@ -29,6 +29,25 @@ describe('reviewed competition publication', () => {
     expect(release).toHaveBeenCalledTimes(1);
   });
 
+  it('rejects unresolved intake status even when review is approved', async () => {
+    const query = jest.fn()
+      .mockResolvedValueOnce({})
+      .mockResolvedValueOnce({ rows: [{
+        id, organization_name: 'Órgão', title: 'Concurso',
+        official_url: 'https://example.gov.br', status: 'requires_review',
+        state_code: 'DF', source_checked_at: new Date(),
+      }] })
+      .mockResolvedValueOnce({});
+    const release = jest.fn();
+    const pool = { connect: jest.fn().mockResolvedValue({ query, release }) } as unknown as Pool;
+    await expect(publishReviewedCompetition(pool, id, 'reviewer'))
+      .rejects.toThrow('Intake status requires review');
+    expect(query.mock.calls.map(args => args[0])).toEqual([
+      'BEGIN', expect.stringContaining("review_status='approved'"), 'ROLLBACK',
+    ]);
+    expect(release).toHaveBeenCalledTimes(1);
+  });
+
   it('publishes and audits approved intake within one transaction', async () => {
     const query = jest.fn()
       .mockResolvedValueOnce({})
