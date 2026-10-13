@@ -19,6 +19,8 @@ describe('stage official competition', () => {
     const [sql, values] = query.mock.calls[0] as [string, unknown[]];
     expect(sql).toContain('public_data.competition_intake');
     expect(sql).toContain("review_status = 'pending'");
+    expect(sql).toContain('reviewed_at = NULL');
+    expect(sql).toContain('reviewed_by = NULL');
     expect(sql).not.toContain('public_data.competitions ');
     expect(values).toContain(draft.officialUrl);
   });
