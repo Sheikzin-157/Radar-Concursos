@@ -6,7 +6,7 @@ import { ApiExceptionFilter } from './shared/presentation/api-exception.filter';
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
 
-  app.setGlobalPrefix('v1', { exclude: ['health'] });
+  app.setGlobalPrefix('v1', { exclude: ['health', 'health/ready'] });
   app.useGlobalPipes(new ValidationPipe({
     transform: true,
     whitelist: true,
