@@ -2,7 +2,7 @@ import pdfParse from 'pdf-parse';
 import type { Pool } from 'pg';
 import { extractOfficialPdf } from './extract-official-pdf';
 
-jest.mock('pdf-parse', () => jest.fn());
+jest.mock('pdf-parse', () => ({ __esModule: true, default: jest.fn() }));
 
 const mockParse = pdfParse as jest.MockedFunction<typeof pdfParse>;
 const pdf = Buffer.concat([Buffer.from('%PDF-1.7\n'), Buffer.alloc(40)]);
