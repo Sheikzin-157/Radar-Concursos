@@ -24,6 +24,28 @@ flutter pub get
 flutter test
 ```
 
+A API publica do Railway e o ambiente padrao do app sao:
+
+```text
+https://radar-concursos-backend-production.up.railway.app/v1
+```
+
+Para executar no dispositivo usando a API hospedada:
+
+```bash
+flutter run
+```
+
+Para gerar um APK de teste conectado ao Railway:
+
+```bash
+flutter build apk --debug
+```
+
+O APK fica em `build/app/outputs/flutter-apk/app-debug.apk`. Sem concursos publicados, a tela inicial mostra corretamente o estado vazio.
+
+Para desenvolver com um backend local, sobrescreva `API_BASE_URL`:
+
 Android Emulator:
 
 ```bash
