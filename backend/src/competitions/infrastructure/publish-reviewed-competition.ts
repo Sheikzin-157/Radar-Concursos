@@ -23,6 +23,9 @@ export async function publishReviewedCompetition(
     );
     if (staged.rows.length !== 1) throw new Error('Intake is not approved or does not exist');
     const item = staged.rows[0];
+    if (item.status === 'requires_review') {
+      throw new Error('Intake status requires review before publication');
+    }
     const org = await client.query<{id: string}>(
       `SELECT id FROM public_data.organizations
        WHERE official_name=$1 AND state_code=$2 ORDER BY created_at LIMIT 1`,
