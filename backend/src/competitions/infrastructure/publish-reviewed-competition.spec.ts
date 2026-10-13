@@ -48,6 +48,26 @@ describe('reviewed competition publication', () => {
     expect(release).toHaveBeenCalledTimes(1);
   });
 
+  it('rejects stale official source verification and rolls back', async () => {
+    const query = jest.fn()
+      .mockResolvedValueOnce({})
+      .mockResolvedValueOnce({ rows: [{
+        id, organization_name: 'Órgão', title: 'Concurso',
+        official_url: 'https://example.gov.br',
+        status: 'inscricoes_abertas', state_code: 'DF',
+        source_checked_at: new Date('2020-01-01T00:00:00Z'),
+      }] })
+      .mockResolvedValueOnce({});
+    const release = jest.fn();
+    const pool = { connect: jest.fn().mockResolvedValue({ query, release }) } as unknown as Pool;
+    await expect(publishReviewedCompetition(pool, id, 'reviewer'))
+      .rejects.toThrow('older than 30 days');
+    expect(query.mock.calls.map(args => args[0])).toEqual([
+      'BEGIN', expect.stringContaining("review_status='approved'"), 'ROLLBACK',
+    ]);
+    expect(release).toHaveBeenCalledTimes(1);
+  });
+
   it('publishes and audits approved intake within one transaction', async () => {
     const query = jest.fn()
       .mockResolvedValueOnce({})
