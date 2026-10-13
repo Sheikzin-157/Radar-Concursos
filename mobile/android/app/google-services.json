@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "142959372535",
+    "project_id": "radar-concursos-6692f",
+    "storage_bucket": "radar-concursos-6692f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:142959372535:android:24d6cc4c9314fc54870bf2",
+        "android_client_info": {
+          "package_name": "br.com.radarconcursos.radar_concursos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsCOzSJV03UVQGRvgmcrwQOvVLk0s77dU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
