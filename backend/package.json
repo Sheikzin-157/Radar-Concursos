@@ -9,7 +9,14 @@
     "lint": "eslint \"src/**/*.ts\"",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage"
+    "test:cov": "jest --coverage",
+    "reminders:dry-run": "ts-node src/notifications/run-reminders.ts --dry-run",
+    "reminders:send": "ts-node src/notifications/run-reminders.ts",
+    "catalog:admin": "ts-node src/competitions/infrastructure/catalog-admin-cli.ts",
+    "catalog:intake": "ts-node src/competitions/infrastructure/run-source-intake.ts",
+    "catalog:discover": "ts-node src/competitions/infrastructure/run-notice-discovery.ts",
+    "edital:extract": "ts-node src/competitions/infrastructure/run-pdf-extraction.ts",
+    "smoke:api": "node scripts/smoke-api.cjs"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",
@@ -20,7 +27,8 @@
     "class-validator": "^0.14.2",
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.8.2",
+    "pdf-parse": "^1.1.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.0",
@@ -33,14 +41,23 @@
     "jest": "^30.0.0",
     "ts-jest": "^29.4.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "@types/pdf-parse": "^1.1.5"
   },
   "jest": {
-    "moduleFileExtensions": ["js", "json", "ts"],
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
-    "transform": {"^.+\\.(t|j)s$": "ts-jest"},
-    "collectCoverageFrom": ["**/*.(t|j)s"],
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }

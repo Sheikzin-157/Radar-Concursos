@@ -3,6 +3,11 @@ import { Type } from 'class-transformer';
 
 export class ListCompetitionsHttpQuery {
   @IsOptional()
+  @IsString()
+  @Length(2, 100)
+  search?: string;
+
+  @IsOptional()
   @IsUUID()
   organizationId?: string;
 
